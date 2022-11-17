@@ -1,0 +1,157 @@
+---
+title: "class10"
+author: "Daniel Xu"
+format: pdf
+---
+
+```{r}
+candy_file <- "candy-data.csv"
+
+candy = read.csv(candy_file, row.names=1)
+head(candy)
+```
+```{r}
+dim(candy)
+```
+Q1) 85
+```{r}
+sum(candy$fruity>0)
+```
+
+Q2)38 
+```{r}
+candy["Kit Kat", ]$winpercent
+candy["Tootsie Roll Snack Bars", ]$winpercent
+```
+
+
+Q3) Kitkat, 76.7686
+Q4) 76.7686
+Q5) 49.6535
+
+```{r}
+library("skimr")
+skim(candy)
+```
+Q6) winpercent
+Q7) boolean value, true or false
+Q8)
+```{r}
+hist(candy$winpercent)
+```
+Q9) No, it is slightly skewed
+
+Q10) It is below 50%
+```{r}
+mean(candy$winpercent[as.logical(candy$chocolate)])
+mean(candy$winpercent[as.logical(candy$fruit)])
+```
+Q11) On average, chocolate is higher
+```{r}
+ t.test(candy$winpercent[as.logical(candy$chocolate)],candy$winpercent[as.logical(candy$fruit)])
+```
+
+Q12) Yes this is stat significant as p value 2.871e-08 is much lower than alpha level of 0.05
+```{r}
+head(candy[order(candy$winpercent),], n=5)
+```
+
+Q13) The 5 least liked are
+Nik L Nip, boston Baked Beans,Chiclets, Super Bubble, and Jawbusters
+```{r}
+tail(candy[order(candy$winpercent),], n=5)
+```
+
+Q14 The 5 most liked are snickers, kit kat, twix, reese miniatures, reese peanut butter cup
+```{r}
+library(ggplot2)
+ggplot(candy) + 
+  aes(winpercent,rownames(candy)) +
+  geom_bar(stat="identity")
+```
+```{r}
+ggplot(candy) + 
+  aes(winpercent, reorder(rownames(candy),winpercent)) +
+  geom_bar(stat="identity")
+```
+```{r}
+my_cols=rep("black", nrow(candy))
+my_cols[as.logical(candy$chocolate)] = "chocolate"
+my_cols[as.logical(candy$bar)] = "brown"
+my_cols[as.logical(candy$fruity)] = "pink"
+ggplot(candy) + 
+  aes(winpercent, reorder(rownames(candy),winpercent)) +
+  geom_col(fill=my_cols) 
+```
+Q17) sixlets
+Q18) Starburst
+```{r}
+library(ggrepel)
+
+# How about a plot of price vs win
+ggplot(candy) +
+  aes(winpercent, pricepercent, label=rownames(candy)) +
+  geom_point(col=my_cols) + 
+  geom_text_repel(col=my_cols, size=3.3, max.overlaps = Inf)
+```
+
+Q19) Chocolate
+```{r}
+ord <- order(candy$pricepercent, decreasing = TRUE)
+head( candy[ord,c(11,12)], n=5 )
+```
+
+Q20) Nik L Lip, Ring Pop, Nestle Smarties,HersheyOs Krackel,HersheyOs Milk Chocolate, Least popular is Nik L Lip
+
+```{r}
+library(corrplot)
+cij <- cor(candy)
+corrplot(cij)
+```
+Q22) 
+fruity and chocolate
+Q23) any category with itself. If not that, it is winpercent and chocolate 
+
+```{r}
+pca <- prcomp(candy, scale=TRUE)
+summary(pca)
+```
+```{r}
+plot(pca$x[,1],pca$x[,2])
+```
+```{r}
+plot(pca$x[,1:2], col=my_cols, pch=16)
+```
+```{r}
+# Make a new data-frame with our PCA results and candy data
+my_data <- cbind(candy, pca$x[,1:3])
+```
+
+```{r}
+p <- ggplot(my_data) + 
+        aes(x=PC1, y=PC2, 
+            size=winpercent/100,  
+            text=rownames(my_data),
+            label=rownames(my_data)) +
+        geom_point(col=my_cols)
+
+p
+```
+```{r}
+library(ggrepel)
+
+p + geom_text_repel(size=3.3, col=my_cols, max.overlaps = Inf)  + 
+  theme(legend.position = "none") +
+  labs(title="Halloween Candy PCA Space",
+       subtitle="Colored by type: chocolate bar (dark brown), chocolate other (light brown), fruity (red), other (black)",
+       caption="Data from 538")
+```
+```{r}
+library(plotly)
+ggplotly(p)
+```
+```{r}
+par(mar=c(8,4,2,2))
+barplot(pca$rotation[,1], las=2, ylab="PC1 Contribution")
+```
+Q24) Fruity, hard, and pluribus. These make sense as popularity of these type of candy is low
