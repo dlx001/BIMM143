@@ -1,0 +1,48 @@
+---
+title: "class06Hmwk"
+author: "Daniel Xu"
+format: pdf
+---
+
+Original
+
+```{r}
+# Can you improve this analysis code?
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+s2 <- read.pdb("1AKE") # kinase no drug
+s3 <- read.pdb("1E4Y") # kinase with drug
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s2.chainA <- trim.pdb(s2, chain="A", elety="CA")
+s3.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s1.b <- s1.chainA$atom$b
+s2.b <- s2.chainA$atom$b
+s3.b <- s3.chainA$atom$b
+plotb3(s1.b, typ="l", ylab="Bfactor")
+plotb3(s2.b, sse=s2.chainA, typ="l", ylab="Bfactor")
+plotb3(s3.b, sse=s3.chainA, typ="l", ylab="Bfactor")
+```
+
+changed function
+
+```{r}
+#takes in the string pdb code
+#it will output a pdb object corresponding to that string, 
+#the trimmed A chain of that object, and the atom b values of that chain.
+# it will then print a lineplot of b atom values
+
+pdbPlot<-function(string){
+  protein<-read.pdb(string)
+  protein.chainA<- trim.pdb(protein, chain="A", elety="CA")
+  protein.b <- protein.chainA$atom$b
+  plotb3(protein.b, sse=protein.chainA, typ="l", ylab="Bfactor")
+}
+#test to see if it produces same output
+pdbPlot("4AKE")
+pdbPlot("1AKE")
+pdbPlot("1E4Y")
+```
+
+
+
+

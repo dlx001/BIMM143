@@ -1,0 +1,134 @@
+---
+title: "class07"
+author: "Daniel Xu"
+format: pdf
+---
+#k means clustering
+test
+
+```{r}
+x<-rnorm(10)
+hist(x)
+```
+center around -3
+```{r}
+y<-rnorm(30,-3)
+z<-rnorm(30,+3)
+temp<-c(y,z)
+x<-cbind(temp,rev(temp))
+plot(x)
+```
+kmeans test
+```{r}
+km<-kmeans(x,centers=3,nstart=20)
+km
+#how many points are in each cluster
+km$size
+```
+Q what components of your result object details
+```{r}
+cluster<-km$cluster
+km$center
+plot(x,col=cluster)
+points(km$center,col="blue",pch=15,cex=2)
+```
+
+heirarchal test
+```{r}
+hc<-hclust(dist(x))
+plot(hc)
+cluster<-cutree(hc,h=4)
+c2<-cutree(hc,k=2)
+plot(x,col=cluster)
+plot(x,col=c2)
+
+```
+# Principal Componenet Analysis(PCA)
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+dim(x)
+```
+Q1)
+There are 17 rows with 5 columns
+
+```{r}
+rownames(x) <- x[,1]
+x<-x[,-1]
+head(x)
+dim(x)
+```
+```{r}
+x <- read.csv(url, row.names=1)
+head(x)
+```
+Q2) The second method is better because there is less code. It's usually better 
+to specify which row is the names rather than use exclusion of the names
+
+```{r}
+barplot(as.matrix(x), beside=T, col=rainbow(nrow(x)))
+barplot(as.matrix(x), col=rainbow(nrow(x)))
+```
+
+Q3
+You can remove beside=T which results in that plot
+
+Q5
+```{r}
+pairs(x, col=rainbow(10), pch=16)
+```
+If they lie on the diagonal that means, that the two countries have similar
+consumption of that commodity. The pairwise plot puts each countries on one axis
+and plots the values for each commodity with those country axes. 
+
+Q6
+North Ireland seems to produce very different amounts when compared to other
+countries as many of the commodities stray from the diagonal for every single 
+other UK country specifically potatoes and soft drinks.
+
+```{r}
+pca<-prcomp(t(x))
+summary(pca)
+```
+Q7
+```{r}
+plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], colnames(x))
+```
+Q8
+```{r}
+plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], colnames(x),col=rainbow(4))
+```
+```{r}
+v <- round( pca$sdev^2/sum(pca$sdev^2) * 100 )
+v
+barplot(v, xlab="Principal Component", ylab="Percent Variation")
+```
+
+```{r}
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,1], las=2 )
+```
+```{r}
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,2], las=2 )
+```
+Q9)
+The two groups that are prominent are soft drinks and fresh potatoes.
+This tells us that fresh_potatoes pushes N. ireland up for fresh potatoes and 
+down for soft drinks. Specifically, N.ireland consumes more fresh potatoes and
+consumes less soft drinks compared to other UK countries
+
+```{r}
+biplot(pca)
+```
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+dim(rna.data)
+```
+Q10
+There are 10 genes with 100 samples

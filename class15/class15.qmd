@@ -1,0 +1,30 @@
+---
+title: "class15"
+format: pdf
+author: "Daniel Xu"
+---
+
+Q1) The star tells it to run the program with everything that ends with .faa.gz so 
+it will run on all 3 files that we just downloaded
+
+Q2) 6530 
+command: grep -c ">" mouse.1.protein.faa
+
+Q3) it will just print the first two DNA sequences to the console
+Q4) it copies it twice to the file
+Q5) grep -c ">" mm-second.fa
+Q6) The -r tag is the recursive tag, it is to copy everything in the directory. The asterik 
+is to tell it to copy everything in the work directory
+
+```{r}
+b<-read.table(file = "C:/Users/danie/Downloads/mm-second.x.zebrafish.tsv", sep = '\t', header = FALSE) 
+colnames(b)<-c("qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore")
+```
+```{r}
+library(ggplot2)
+ggplot(b, aes(pident, bitscore)) + geom_point(alpha=0.1) 
+```
+```{r}
+ggplot(b, aes((b$pident * (b$qend - b$qstart)), bitscore)) + geom_point(alpha=0.1) + geom_smooth()
+```
+

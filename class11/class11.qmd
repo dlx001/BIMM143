@@ -1,0 +1,25 @@
+---
+title: "class11"
+format: pdf
+---
+
+Q13
+```{r}
+file<-read.table("SNP.txt")
+GG<-file[file$geno=="G/G",]
+summary(GG)
+AG<-file[file$geno=="A/G",]
+summary(AG)
+AA<-file[file$geno=="A/A",]
+summary(AA)
+```
+GG has 121 samples with a median expression level of 20.074.AG has 233 samples with median expression of 25.065. 
+AA has 108 samples with a median expression level of 31.25. 
+
+Q14
+```{r}
+library(ggplot2)
+ggplot(file,aes(geno,exp,color=geno))+geom_boxplot()
+```
+Q14) Based off this boxplot, it appears that the A/A genotype has higher overall expression of
+ORMDL3 compared to the G/G genotype. The SNP effect appears to affect expression of ORMDL3

@@ -1,0 +1,54 @@
+---
+title: "geneProject"
+format: html
+---
+
+```{r}
+library(bio3d)
+aln<-read.fasta("Alignement.fa")
+```
+
+```{r}
+seq.ma<-seqidentity(aln)
+```
+
+```{r}
+heatmap(seq.ma)
+```
+
+```{r}
+con<-consensus(aln)
+```
+
+```{r}
+blast<-blast.pdb(con$seq, database="pdb", time.out= NULL, chain.single=TRUE)
+raw.hits<-plot.blast(blast)
+```
+
+```{r}
+head(raw.hits$hits)
+```
+
+```{r}
+ids<-c(raw.hits$hits[1:3])
+table<-pdb.annotate(ids)
+```
+
+```{r}
+source<-table$source
+resolution<-table$resolution
+id<-table$structureId
+technique<-table$experimentalTechnique
+```
+
+```{r}
+top3<-blast$raw[1:3,]
+```
+
+```{r}
+part1<- table[, c("structureId","experimentalTechnique","resolution","source")]
+part2<- top3[, c("evalue","identity")]
+complete<-cbind(part1,part2)
+complete
+rownames(complete)<-NULL
+```

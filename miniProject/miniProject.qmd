@@ -1,0 +1,213 @@
+---
+title: "miniProject"
+format: pdf
+---
+
+
+```{r}
+# Save your input data file into your Project directory
+fna.data <- "WisconsinCancer.csv"
+
+# Complete the following code to input the data and store as wisc.df
+wisc.df <-read.csv(fna.data, row.names=1)
+wisc.data <- wisc.df[,-1]
+diagnosis<-as.factor(wisc.df$diagnosis)
+```
+
+
+```{r}
+dim(wisc.data)
+```
+Q1 There are 569 observations in the data set
+```{r}
+length(grep("M",diagnosis,value="TRUE"))
+```
+Q2 There are 212 observations of malignancy
+```{r}
+length(grep("_mean",names(wisc.data),value="TRUE"))
+```
+Q3) There are 10 variables with _mean as their suffix
+
+
+2. Principal Component Analysis
+
+```{r}
+colMeans(wisc.data)
+
+apply(wisc.data,2,sd)
+```
+```{r}
+wisc.pr <- prcomp(wisc.data, scale=TRUE)
+summary(wisc.pr)
+```
+
+Q4 44%
+Q5 4
+Q6 0.4427+0.1897+0.09393+0.06602+0.05496+0.04025+0.02251, You need 7 PC
+
+```{r}
+biplot(wisc.pr)
+```
+```{r}
+# Scatter plot observations by components 1 and 2
+plot(wisc.pr$x[,1],wisc.pr$x[,2], col = diagnosis , 
+     xlab = "PC1", ylab = "PC2")
+```
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,3], col = diagnosis, 
+     xlab = "PC1", ylab = "PC3")
+```
+Q8 I notice that the separation of the groups are pretty similar with both plots suggesting that PC1 does a pretty 
+good job
+
+```{r}
+# Create a data.frame for ggplot
+df <- as.data.frame(wisc.pr$x)
+df$diagnosis <- diagnosis
+
+# Load the ggplot2 package
+library(ggplot2)
+
+# Make a scatter plot colored by diagnosis
+ggplot(df) + 
+  aes(PC1, PC2, col=diagnosis) + 
+  geom_point()
+```
+
+```{r}
+# Calculate variance of each component
+pr.var <- wisc.pr$sdev^2
+head(pr.var)
+```
+
+```{r}
+# Variance explained by each principal component: pve
+pve <- pr.var/sum(pr.var)
+
+# Plot variance explained for each principal component
+plot(pve, xlab = "Principal Component", 
+     ylab = "Proportion of Variance Explained", 
+     ylim = c(0, 1), type = "o")
+```
+```{r}
+# Alternative scree plot of the same data, note data driven y-axis
+barplot(pve, ylab = "Precent of Variance Explained",
+     names.arg=paste0("PC",1:length(pve)), las=2, axes = FALSE)
+axis(2, at=pve, labels=round(pve,2)*100 )
+```
+```{r}
+## ggplot based graph
+##install.packages("factoextra")
+library(factoextra)
+fviz_eig(wisc.pr, addlabels = TRUE)
+```
+```{r}
+wisc.pr$rotation["concave.points_mean",1]
+```
+Q9)
+-0.2608538
+Q10)Based on the screeplot, YOu would need 5 PCA
+
+3. Hierarchal Clustering
+
+```{r}
+data.scaled <-scale(wisc.data)
+data.dist <- dist(data.scaled)
+wisc.hclust <- hclust(data.dist,"complete")
+plot(wisc.hclust)
+abline(h=19.5, col="red", lty=2)
+```
+Q11) Between 19 and 20 height there are 4 clusters
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=4)
+table(wisc.hclust.clusters, diagnosis)
+```
+```{r}
+wisc.hclust.clusters <- cutree(wisc.hclust,k=6)
+table(wisc.hclust.clusters, diagnosis)
+```
+Q12) 4 or 5 seems to be the best amount of clusters.At lower than 4, there is no separation while at above 5 and 6, the additional 
+separation is so marginal and doesn't seem to show any improved impact
+
+
+```{r}
+  wisc.hclust <- hclust(data.dist,"ward.D2")
+plot(wisc.hclust)
+wisc.hclust <- hclust(data.dist,"complete")
+```
+Q13) Ward.D2 seems to produce the best results as it clearly splits the groups into two 
+while the others can't clearly distinguish into two visually obviously separate groups
+
+```{r}
+wisc.km <- kmeans(data.scaled, centers=2, nstart= 20)
+table(wisc.km$cluster,diagnosis)
+```
+Q14, it separates it pretty well as group 1 seems to be skewed bengign while
+group 2 seems to be skewed malignant. These numbers are pretty comparable to
+the hclust results.
+
+```{r}
+table(wisc.hclust.clusters,wisc.km$cluster)
+```
+```{r}
+wisc.pr.hclust<-hclust(dist(wisc.pr$x[,1:7]),"ward.D2")
+plot(wisc.pr.hclust)
+grps <- cutree(wisc.pr.hclust, k=2)
+table(grps)
+table(grps, diagnosis)
+plot(wisc.pr$x[,1:2], col=grps)
+plot(wisc.pr$x[,1:2], col=diagnosis)
+```
+Q15
+The new model clearly splits it into two groups despite the 20 outliers. When compared to
+the hclust.clusters model, it does very comparably. 
+```{r}
+table(wisc.km$cluster, diagnosis)
+table(wisc.hclust.clusters, diagnosis)
+```
+Q16) the kmeans and hclust alone do fairly similar in that they can separate them 
+into cleaer two groups but each group will have a fair amount of the other diagnosis. 
+The pca hclust does better as within each group there are less "false positives" 
+
+Q17
+```{r}
+# for Sensitivity
+#hclust alone
+HclustSens<-165/(165+12)
+#kmeans alone
+kMeansSens<-175/(175+14)
+#pca hclust
+pcaHclustSens<-188/(188+28)
+
+
+
+# specificity
+#hclust alone
+HclustSpec<-343/(343+40)
+#kmeans alone
+kMeansSpec<-343/(343+37)
+#pca hclust
+pcaHclustSpec<-329/(329+24)
+```
+The hclust alone has the greatest sensitivity while the pca hclust has the greatest
+specificity
+
+```{r}
+#url <- "new_samples.csv"
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+npc
+```
+```{r}
+plot(wisc.pr$x[,1:2], col=grps)
+points(npc[,1], npc[,2], col="blue", pch=16, cex=3)
+text(npc[,1], npc[,2], c(1,2), col="white")
+```
+
+Q18)
+The groups coloring is produced from cutting the pca hclust. From the previous question 
+we know that the pca hclust has low sensitivity but high specificity. This means that it is
+worse at identifying ill patients compared to its ability to reject healthy patients. This
+would mean we should be more worried about patient 2 as the patients in the black group represent
+the ones the pca hclust assigned as malignant. 
