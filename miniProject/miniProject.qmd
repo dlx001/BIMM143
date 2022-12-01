@@ -1,6 +1,6 @@
 ---
 title: "miniProject"
-format: pdf
+format: html
 ---
 
 

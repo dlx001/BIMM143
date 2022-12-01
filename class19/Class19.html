@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Daniel Xu">
 
 <title>Class19</title>
 <style>
@@ -115,6 +116,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Daniel Xu </p>
+          </div>
+  </div>
     
     
   </div>
@@ -336,12 +343,12 @@ Attaching package: 'dplyr'</code></pre>
 5 Not Hispanic or Latino White    1986-01-01    2016-09-12 2020_dataset
 6 Not Hispanic or Latino White    1986-01-01    2016-09-12 2020_dataset
          age
-1 13481 days
-2 13481 days
-3 13481 days
-4 13481 days
-5 13481 days
-6 13481 days</code></pre>
+1 13482 days
+2 13482 days
+3 13482 days
+4 13482 days
+5 13482 days
+6 13482 days</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -406,12 +413,12 @@ Attaching package: 'dplyr'</code></pre>
 5 Not Hispanic or Latino White    1986-01-01    2016-09-12 2020_dataset
 6 Not Hispanic or Latino White    1986-01-01    2016-09-12 2020_dataset
          age
-1 13481 days
-2 13481 days
-3 13481 days
-4 13481 days
-5 13481 days
-6 13481 days</code></pre>
+1 13482 days
+2 13482 days
+3 13482 days
+4 13482 days
+5 13482 days
+6 13482 days</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -457,8 +464,8 @@ Attaching package: 'dplyr'</code></pre>
 <p><img src="Class19_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Q16) over time the antigen levels of the aP are significantly growing over time compared to the wP. In both the antigen level increases over time</p>
-<p>Q17) aP has higher antigen level over time comapred to wP</p>
+<p>Q16) over time the antigen levels of the aP grow up to visit 4 and seem to decrease gradually with sequential visits</p>
+<p>Q17) aP has higher antigen level after the peak visit and seems to almost stay at the peak level compared to the wP that dwindles over time</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://www.cmi-pb.org/api/v2/rnaseq?versioned_ensembl_gene_id=eq.ENSG00000211896.7"</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -481,7 +488,7 @@ Attaching package: 'dplyr'</code></pre>
 <p>Q19)</p>
 <p>It is at maximum level at visit 4</p>
 <p>Q20)</p>
-<p>No the ab titer data shows continuous increase instead of the peak there is at visit 4 Maybe maximum expression occurs at visit 4 and the consequences of this peak expression is seen over time by the gradual increase in ab titer.</p>
+<p>Yes the ab titer level shows a peak around visit 5 while the rna seq data shows a peak around visit 4. This is very close. The difference may be that the ab titer may have increased as a repsonse to the expression increase and thus there is a slight delay.</p>
 
 </main>
 <!-- /main column -->

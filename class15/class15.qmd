@@ -1,6 +1,6 @@
 ---
 title: "class15"
-format: pdf
+format: html
 author: "Daniel Xu"
 ---
 

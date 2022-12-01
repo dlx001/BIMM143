@@ -1,6 +1,6 @@
 ---
 title: "class13"
-format: pdf
+format: html
 ---
 
 Section 1. Differential Expression Analysis

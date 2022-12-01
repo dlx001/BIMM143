@@ -1,6 +1,6 @@
 ---
 title: "class12"
-format: pdf
+format: html
 editor: 
   markdown: 
     wrap: 72

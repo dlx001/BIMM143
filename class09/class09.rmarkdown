@@ -1,0 +1,126 @@
+---
+title: "class09"
+author: "Daniel Xu"
+format: html
+---
+
+```{r}
+x<-read.csv("Data.csv")
+```
+
+```{r}
+Xray<-as.numeric(gsub(",", "", x$X.ray))
+sumXray<-sum(Xray)
+EM<-as.numeric(gsub(",", "", x$EM))
+sumEM<-sum(EM)
+Total<-sum(as.numeric(gsub(",", "", x$Total)))
+percent<-(sumXray+sumEM)/Total
+```
+
+
+Q1)The percent is 93%
+
+
+```{r}
+protein<-as.numeric(gsub(",", "", x$Total[1]))
+percent<-protein/196779
+```
+
+
+Q2)87%
+
+Q3) 1985
+
+![HIV-Pr structure from 1hsg](1HSG.png)
+
+Q4) it's because the hydrogens are extremely small that it basically looks like there's only one atom
+
+Q5)Residue number 127
+
+![](HSGResidues.png)
+
+Q6)
+
+
+```{r}
+library(bio3d)
+pdb <- read.pdb("1hsg")
+```
+
+
+Q7 198 AA
+
+Q8) Water
+
+Q9) 2 chains
+
+
+```{r}
+attributes(pdb)
+```
+
+
+Q10 msa
+
+Q11 bitbucket
+
+Q12 TRUe
+
+
+```{r}
+library(bio3d)
+aa <- get.seq("1ake_A")
+aa
+```
+
+
+Q13 214
+
+
+```{r}
+hits <- NULL
+hits$pdb.id <- c('1AKE_A','6S36_A','6RZE_A','3HPR_A','1E4V_A','5EJE_A','1E4Y_A','3X2S_A','6HAP_A','6HAM_A','4K46_A','3GMT_A','4PZL_A')
+```
+
+```{r}
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+# Align releated PDBs
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+# Vector containing PDB codes for figure axis
+ids <- basename.pdb(pdbs$id)
+```
+
+```{r}
+# Draw schematic alignment
+#plot(pdbs, labels=ids)
+```
+
+```{r}
+anno <- pdb.annotate(ids)
+unique(anno$source)
+anno
+
+# Perform PCA
+pc.xray <- pca(pdbs)
+plot(pc.xray)
+```
+
+```{r}
+# Calculate RMSD
+rd <- rmsd(pdbs)
+
+# Structure-based clustering
+hc.rd <- hclust(dist(rd))
+grps.rd <- cutree(hc.rd, k=3)
+
+plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
+```
+
+```{r}
+# Visualize first principal component
+pc1 <- mktrj(pc.xray, pc=1, file="pc_1.pdb")
+```
+
+
+{{< video PC_1.PDB_animate-trajectory.mp4>}}
+

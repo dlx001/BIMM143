@@ -1,6 +1,6 @@
 ---
 title: "class11"
-format: pdf
+format: html
 ---
 
 Q13
